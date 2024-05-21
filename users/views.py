@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -74,3 +74,21 @@ def profile_emailchange(request):
             messages.warning(request, "Form not valid")
             return redirect("profile-settings")
     return redirect("home")
+
+
+@login_required
+def profile_emailverify(request):
+    send_email_confirmation(request, request.user)
+    return redirect("profile-settings")
+
+
+@login_required
+def profile_delete_view(request):
+    user = request.user
+    if request.method == "POST":
+        logout(request)
+        user.delete()
+        messages.success(request, "Account deleted, what a pity")
+        return redirect("home")
+
+    return render(request, "users/profile_delete.html")
