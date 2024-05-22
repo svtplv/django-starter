@@ -6,8 +6,8 @@ from django.templatetags.static import static
 class User(AbstractUser):
     email = models.EmailField(unique=True)
 
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = ["username"]
 
 
 class Profile(models.Model):
