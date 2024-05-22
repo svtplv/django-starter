@@ -18,11 +18,16 @@ def user_postsave(sender, instance, created, **kwargs):
             user=user,
         )
     else:
-        email_address = EmailAddress.objects.get_primary(user)
-        if email_address.email != user.email:
-            email_address.email = user.email
-            email_address.verified = False
-            email_address.save()
+        try:
+            email_address = EmailAddress.objects.get_primary(user=user)
+            if email_address and email_address.email != user.email:
+                email_address.email = user.email
+                email_address.verified = False
+                email_address.save()
+        except AttributeError:
+            EmailAddress.objects.create(
+                user=user, email=user.email, primary=True, verified=False
+            )
 
 
 @receiver(pre_save, sender=User)
